@@ -84,6 +84,7 @@ def add_meal():
 
 #Show daily nutrition summary 
 def show_nutrition_summary():
+    global nutrition_log #ensures we access the correct list
     if not nutrition_log:
         print("No meals logged yet. \n")
         return
@@ -110,12 +111,72 @@ def show_nutrition_summary():
     if total_fats < 40:
         print("Healthy fats help hormones. Consider adding some.")
     print()
+    input("Press Enter to return to the main menu...")
 
 #Save nutrition data
 def save_nutrition():
     with open(NUTRITION_FILE, "w") as f:
         json.dump(nutrition_log, f)
     print("Nutrition data saved!\n")
+
+
+
+#------------------Sleep Tracking Module-----------------
+
+SLEEP_FILE = "sleep_data.json"
+
+#Load existing sleep data
+
+try:
+    with open(SLEEP_FILE, "r") as f:
+      sleep_log = json.load(f)
+except FileNotFoundError:
+    sleep_log = []
+
+#Add a sleep entry
+def add_sleep():
+    global sleep_log
+    print("\n--- Add Sleep Entry ---")
+    date = input("Date (YYYY-MM-DD): ")
+    hours = float(input("Hours slept: "))
+    quality = input("Sleep quality (Poor, Average, Good, Excellent): ")
+
+    sleep_log.append({
+        "date": date,
+        "hours": hours,
+        "quality": quality
+    })
+
+    print(f"Sleep for {date} logged successfully!\n")
+
+
+#Show sleep summary
+
+def show_sleep_summary():
+    global sleep_log
+    if not sleep_log:
+        print("No sleep entries logged yet.\n")
+        return
+    total_hours = sum(entry["hours"] for entry in sleep_log)
+    average_hours = total_hours / len(sleep_log)
+
+    print("\n--- Sleep Summary ---")
+
+    for entry in sleep_log:
+        print(f"{entry['date']} {entry[hours]}, hours, Quality: {entry['quality']} ")
+
+        print(f"\nTotal hours slept: {total_hours}")
+        print(f"Average hours per entry: {average_hours:.2f}\n")
+        input("Press Enter to return to the main menu...")
+
+#Saves sleep data
+def save_sleep():
+    with open(SLEEP_FILE, "w") as f:
+        json.dump(sleep_log, f)
+    print("Sleep data saved!\n")
+
+
+
 
 
 #Main menu
@@ -126,7 +187,9 @@ def main_menu():
         print("2. Show Summary")
         print("3. Add Meal")
         print("4. Show Nutrition Summary")
-        print("5. Save & Exit")
+        print("5. Add Sleep Entry")
+        print("6. Show Sleep Summary")
+        print("7. Save & Exit")
 
         choice = input("Choose an option: ")
         if choice == "1":
@@ -138,7 +201,13 @@ def main_menu():
         elif choice == "4":
             show_nutrition_summary()
         elif choice == "5":
+            add_sleep()
+        elif choice == "6":
+            show_sleep_summary
+        elif choice == "7":
             save_data()
+            save_nutrition()
+            save_sleep()
             break
         else:
             print("Invalid choice. Try again.\n")
