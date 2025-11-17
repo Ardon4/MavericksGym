@@ -176,6 +176,74 @@ def save_sleep():
     print("Sleep data saved!\n")
 
 
+#---------------Progress Tracking Module -------------
+import datetime
+
+PROGRESS_FILE = "progress_data.json"
+
+#Load existing progress data
+
+try:
+    with open(PROGRESS_FILE, "r") as f:
+        progress_log = json.load(f)
+except FileNotFoundError:
+    progress_log = []
+
+def update_progress():
+    global progress_log
+    print("\n--- Update Progress ---")
+    date = input("Date (YYYY-MM-DD): ")
+    exercises_done = int(input("Number of exercises done today: "))
+    hours_slept = float(input("Hours slept today: "))
+    meals_logged = int(input("Number of meals logged today: "))
+
+    progress_log.append({
+        "date": date,
+        "exercises_done": exercises_done,
+        "hours_slept": meals_logged
+
+    })
+
+    print(f"Progress for {date} updated successfully!\n")
+
+def show_progress_summary():
+    global progress_log
+    if not progress_log:
+        print("No progress logged yet.\n")
+        return
+    
+    total_exercises = sum(day["exercises_done"] for day in progress_log)
+    total_sleep = sum(day["hours_slept"] for day in progress_log)
+    total_meals = sum(day["meals_logged"] for day in progress_log)
+    days = len(progress_log)
+
+    avg_exercises = total_exercises / days
+    avg_sleep = total_sleep / days
+    avg_meals = total_meals / days
+
+    print("\n--- Progress Summary ---")
+    print(f"Days tracked: {days}")
+    print(f"Average exercises per day: {avg_exercises:.2f}")
+    print(f"Average sleep per day: {avg_sleep:.2f}")
+    print(f"Average meals logged per day: {avg_meals:.2f}")
+
+
+    #Determine level
+    level_score = (avg_exercises/5)*0.5 + (avg_sleep/8)*0.3 + (avg_meals/3)*0.2
+    if level_score >=0.8:
+        level = "Athelete"
+    elif level_score >= 0.5:
+        level = "Intermediate"
+    else:
+        level = "Beginner"
+
+    print(f"Current Level: {level}\n")
+    input("Press Enter to retuirn to the main menu...")
+
+def save_progress():
+    with open(PROGRESS_FILE, "w") as f:
+        json.dump(progress_log, f)
+    print("Progress data saved!\n")
 
 
 
@@ -189,7 +257,9 @@ def main_menu():
         print("4. Show Nutrition Summary")
         print("5. Add Sleep Entry")
         print("6. Show Sleep Summary")
-        print("7. Save & Exit")
+        print("7. Update Progress")
+        print("8. Show progress Summary")
+        print("9. Save & Exit")
 
         choice = input("Choose an option: ")
         if choice == "1":
@@ -205,9 +275,14 @@ def main_menu():
         elif choice == "6":
             show_sleep_summary
         elif choice == "7":
+            update_progress()
+        elif choice == "8":
+            show_progress_summary()
+        elif choice == "9":
             save_data()
             save_nutrition()
             save_sleep()
+            save_progress()
             break
         else:
             print("Invalid choice. Try again.\n")
