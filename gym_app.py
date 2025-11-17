@@ -245,6 +245,20 @@ def save_progress():
         json.dump(progress_log, f)
     print("Progress data saved!\n")
 
+import webbrowser
+import os
+
+def show_reward():
+    print("\n🏋️ Congratulations! You reached the Athlete level! 🏋️\n")
+    print("As a reward, enjoy this legendary bench press moment!\n")
+    
+    # path to your reward image
+    image_path = os.path.abspath("arnold_bench.jpg")
+    webbrowser.open(f"file:///{image_path}")
+    
+    input("Press Enter to return to the main menu...")
+
+
 
 
 #Main menu
