@@ -1,0 +1,7 @@
+# Core library for OpenAI API
+openai>=1.0.0
+
+# Optional, only if you need colored terminal output
+colorama>=0.4.6
+
+# JSON, OS, datetime, webbrowser are built-in, no need to install
