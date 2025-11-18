@@ -1,5 +1,10 @@
+from ai_coach import full_coach_feedback
 #Workout Logging Module
+import os
 import json
+#---------chatGpt---------
+
+
 #File to store workout data
 DATA_FILE = 'workout_data.json'
 #Load existing data if available 
@@ -163,7 +168,7 @@ def show_sleep_summary():
     print("\n--- Sleep Summary ---")
 
     for entry in sleep_log:
-        print(f"{entry['date']} {entry[hours]}, hours, Quality: {entry['quality']} ")
+        print(f"{entry['date']} {entry['hours']}, hours, Quality: {entry['quality']} ")
 
         print(f"\nTotal hours slept: {total_hours}")
         print(f"Average hours per entry: {average_hours:.2f}\n")
@@ -200,7 +205,8 @@ def update_progress():
     progress_log.append({
         "date": date,
         "exercises_done": exercises_done,
-        "hours_slept": meals_logged
+        "hours_slept": hours_slept,
+        "meals_logged": meals_logged
 
     })
 
@@ -258,6 +264,33 @@ def show_reward():
     
     input("Press Enter to return to the main menu...")
 
+#---------Reward screen------------
+def reward_screen():
+    print("\n" + "="*40)
+    print("🏋️  Reward Unlocked! 🏆")
+    print("You just crushed your workout! Check out Arnold lifting serious weights! 💪")
+    print(r"""
+       _______________
+      |@@@@|     |####|
+      |@@@@|     |####|
+      |@@@@|     |####|
+      \@@@@|     |####/
+       \@@@|     |###/
+        `@@|_____|##'
+             (O O)
+      /-------\_/
+     / |  R  | \
+    *  |  E  |  *
+       |  W  |  
+       |  A  |
+       |  R  |
+       |  D  |
+       '-----'
+    """)
+    print("="*40 + "\n")
+    input("Press Enter to return to the main menu...")
+
+
 
 
 
@@ -273,7 +306,10 @@ def main_menu():
         print("6. Show Sleep Summary")
         print("7. Update Progress")
         print("8. Show progress Summary")
-        print("9. Save & Exit")
+        print("9. AI Coach Feedback")
+        print("10. Reward screen")
+        print("11. Ask ChatGpt")
+        print("12. Save & Exit")
 
         choice = input("Choose an option: ")
         if choice == "1":
@@ -287,12 +323,45 @@ def main_menu():
         elif choice == "5":
             add_sleep()
         elif choice == "6":
-            show_sleep_summary
+            show_sleep_summary()
         elif choice == "7":
             update_progress()
         elif choice == "8":
             show_progress_summary()
         elif choice == "9":
+            print("\n=== 🤖 AI Coach Feedback ===\n")
+            # Just pass the original lists directly
+            print(full_coach_feedback(workouts, nutrition_log, sleep_log))
+            input("\nPress Enter to return to the main menu...")
+
+
+        elif choice == "10":
+            reward_screen()
+
+        elif choice == "11":
+            question = input("\nAsk ChatGpt a question about fitness, nutrition, or sleep:\n>")
+
+            try:
+                #Ensure the tool is loadde from the ApI connector
+                from openai import api_tool
+                response = api_tool.run({
+                    "tool": "openai",
+                    "action": "chat",
+                    "parameters": {
+                        "messages": [
+                                {"role": "system", "content": "You are a fitness coac who gives concise advise"},
+                                {"role": "user", "content": question}
+
+                        ]
+                    }
+                })
+
+                print("\nChatGPY says:\n")
+                print(response)
+            except Exception as e:
+                print("Error:\n", e)
+            input("\nPress Enter to return to the main menu...")
+        elif choice == "12":
             save_data()
             save_nutrition()
             save_sleep()
